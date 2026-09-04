@@ -13,7 +13,7 @@ export default function handler(req, res) {
     `?client_id=${encodeURIComponent(appId)}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     `&response_type=code` +
-    `&scope=instagram_business_basic,instagram_business_manage_insights`;
+    `&scope=instagram_basic,instagram_manage_insights`;
 
   res.redirect(authUrl);
 }
