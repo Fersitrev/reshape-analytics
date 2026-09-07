@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Obtener las publicaciones
+    // Obtener publicaciones
     const mediaUrl =
       "https://graph.instagram.com/v23.0/" +
       userId +
@@ -38,23 +38,19 @@ export default async function handler(req, res) {
 
     const posts = mediaData.data || [];
 
-    // 2. Obtener insights de cada publicación
+    // Obtener insights individualmente
     const postsWithInsights = await Promise.all(
       posts.map(async (post) => {
 
-        const metrics =
-          "reach,views,likes,comments,shares,saved,total_interactions";
-
-        const insightsUrl =
-          "https://graph.instagram.com/v23.0/" +
-          post.id +
-          "/insights" +
-          "?metric=" +
-          encodeURIComponent(metrics) +
-          "&access_token=" +
-          encodeURIComponent(token);
-
         try {
+          const insightsUrl =
+            "https://graph.instagram.com/v23.0/" +
+            post.id +
+            "/insights" +
+            "?metric=reach" +
+            "&access_token=" +
+            encodeURIComponent(token);
+
           const insightsResponse = await fetch(insightsUrl);
           const insightsData = await insightsResponse.json();
 
@@ -85,7 +81,6 @@ export default async function handler(req, res) {
       })
     );
 
-    // 3. Devolver publicaciones + métricas
     return res.status(200).json({
       data: postsWithInsights
     });
