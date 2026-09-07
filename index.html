@@ -522,7 +522,7 @@
 
   <!-- MAIN -->
 
-  <main>
+  <main id="dashboardMain" style="display:none;">
 
     <!-- INTRO -->
 
@@ -1235,7 +1235,189 @@
      * CARGAR AL ABRIR
      */
 
-    refreshDashboard();
+    /*
+ * ELEMENTOS DEL LOGIN
+ */
+
+const loginScreen =
+  document.getElementById(
+    "loginScreen"
+  );
+
+const dashboardMain =
+  document.getElementById(
+    "dashboardMain"
+  );
+
+const loginForm =
+  document.getElementById(
+    "loginForm"
+  );
+
+const passwordInput =
+  document.getElementById(
+    "passwordInput"
+  );
+
+const loginButton =
+  document.getElementById(
+    "loginButton"
+  );
+
+const loginError =
+  document.getElementById(
+    "loginError"
+  );
+
+
+/*
+ * MOSTRAR DASHBOARD
+ */
+
+function showDashboard() {
+
+  loginScreen.style.display =
+    "none";
+
+  dashboardMain.style.display =
+    "block";
+
+  refreshDashboard();
+
+}
+
+
+/*
+ * MOSTRAR LOGIN
+ */
+
+function showLogin() {
+
+  loginScreen.style.display =
+    "flex";
+
+  dashboardMain.style.display =
+    "none";
+
+  passwordInput.focus();
+
+}
+
+
+/*
+ * COMPROBAR SESIÓN
+ */
+
+async function checkSession() {
+
+  try {
+
+    const response =
+      await fetch("/api/session");
+
+    const data =
+      await response.json();
+
+    if (data.authenticated) {
+
+      showDashboard();
+
+    } else {
+
+      showLogin();
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error comprobando sesión:",
+      error
+    );
+
+    showLogin();
+
+  }
+
+}
+
+
+/*
+ * LOGIN
+ */
+
+loginForm.addEventListener(
+  "submit",
+  async function(event) {
+
+    event.preventDefault();
+
+    loginButton.disabled =
+      true;
+
+    loginButton.textContent =
+      "Entrando...";
+
+    loginError.textContent =
+      "";
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body: JSON.stringify({
+              password:
+                passwordInput.value
+            })
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "No se pudo iniciar sesión"
+        );
+
+      }
+
+      passwordInput.value =
+        "";
+
+      showDashboard();
+
+    } catch (error) {
+
+      loginError.textContent =
+        error.message;
+
+    }
+
+    loginButton.disabled =
+      false;
+
+    loginButton.textContent =
+      "Entrar";
+
+  }
+);
+
+
+/*
+ * COMPROBAR SESIÓN AL ABRIR
+ */
+
+checkSession();
 
   </script>
 
