@@ -4,6 +4,3 @@ export default function handler(req, res) {
     message: "media-insights funciona"
   });
 }
-  }
-}
-```
