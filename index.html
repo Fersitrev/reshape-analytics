@@ -1,8 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>re:shape analytics</title>
 
   <style>
@@ -109,7 +111,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 50px;
     }
 
     .card {
@@ -129,6 +131,135 @@
     .card-value {
       font-size: 30px;
       font-weight: 600;
+    }
+
+    /* PUBLICACIONES */
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .section-description {
+      font-size: 13px;
+      color: #777;
+      margin-top: 6px;
+    }
+
+    .post-count {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .post {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .post:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .post-image-wrapper {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #eeeeec;
+      overflow: hidden;
+    }
+
+    .post-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-content {
+      padding: 16px;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .post-type {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #777;
+    }
+
+    .post-date {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .post-caption {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #555;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 58px;
+    }
+
+    .post-link {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 12px;
+      color: #171717;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .post-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ESTADOS */
+
+    .loading {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 45px;
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .error {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 45px;
+      text-align: center;
+      color: #777;
+      font-size: 14px;
     }
 
     .empty {
@@ -152,7 +283,16 @@
       margin: 0 auto;
     }
 
+    @media (max-width: 1000px) {
+
+      .posts-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+    }
+
     @media (max-width: 800px) {
+
       header {
         padding: 18px 20px;
       }
@@ -168,30 +308,55 @@
       .dashboard {
         grid-template-columns: repeat(2, 1fr);
       }
+
+      .posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
     }
 
     @media (max-width: 500px) {
+
       .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .posts-grid {
         grid-template-columns: 1fr;
       }
 
       .status {
         display: none;
       }
+
+      .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+
     }
+
   </style>
 </head>
 
+
 <body>
+
+  <!-- HEADER -->
 
   <header>
 
     <div class="brand">
-      <div class="logo">r:</div>
+
+      <div class="logo">
+        r:
+      </div>
 
       <div class="brand-name">
         re:shape analytics
       </div>
+
     </div>
 
     <div class="status">
@@ -201,7 +366,11 @@
   </header>
 
 
+  <!-- MAIN -->
+
   <main>
+
+    <!-- INTRO -->
 
     <section class="intro">
 
@@ -219,12 +388,17 @@
         del contenido de re:shape works en Instagram.
       </p>
 
-      <button class="connect" id="refreshButton">
+      <button
+        class="connect"
+        id="refreshButton"
+      >
         Actualizar datos
       </button>
 
     </section>
 
+
+    <!-- METRICS -->
 
     <section class="dashboard">
 
@@ -234,7 +408,10 @@
           Seguidores
         </div>
 
-        <div class="card-value" id="followers">
+        <div
+          class="card-value"
+          id="followers"
+        >
           —
         </div>
 
@@ -247,7 +424,10 @@
           Alcance
         </div>
 
-        <div class="card-value" id="reach">
+        <div
+          class="card-value"
+          id="reach"
+        >
           —
         </div>
 
@@ -260,7 +440,10 @@
           Interacciones
         </div>
 
-        <div class="card-value" id="interactions">
+        <div
+          class="card-value"
+          id="interactions"
+        >
           —
         </div>
 
@@ -273,7 +456,10 @@
           Contenido publicado
         </div>
 
-        <div class="card-value" id="mediaCount">
+        <div
+          class="card-value"
+          id="mediaCount"
+        >
           —
         </div>
 
@@ -282,77 +468,168 @@
     </section>
 
 
-    <section class="empty">
+    <!-- PUBLICACIONES -->
 
-      <h2>
-        Datos de Instagram
-      </h2>
+    <section class="posts-section">
 
-      <p>
-        Los datos de rendimiento de re:shape works aparecerán
-        aquí una vez que la conexión con Instagram esté activa.
-      </p>
+      <div class="section-header">
+
+        <div>
+
+          <div class="section-title">
+            Contenido publicado
+          </div>
+
+          <div class="section-description">
+            Últimas publicaciones de @reshapeworks
+          </div>
+
+        </div>
+
+        <div
+          class="post-count"
+          id="postCount"
+        >
+          Cargando...
+        </div>
+
+      </div>
+
+
+      <div
+        class="posts-grid"
+        id="postsGrid"
+      >
+
+        <div class="loading">
+          Cargando publicaciones...
+        </div>
+
+      </div>
 
     </section>
 
   </main>
 
 
+  <!-- JAVASCRIPT -->
+
   <script>
 
     /*
-     * =========================================================
-     * CARGAR DATOS DE INSTAGRAM
-     * =========================================================
+     * FORMATEAR NÚMEROS
+     */
+
+    function formatNumber(value) {
+
+      if (
+        value === undefined ||
+        value === null
+      ) {
+
+        return "—";
+
+      }
+
+      return new Intl.NumberFormat(
+        "es-MX"
+      ).format(value);
+
+    }
+
+
+    /*
+     * FORMATEAR FECHA
+     */
+
+    function formatDate(timestamp) {
+
+      if (!timestamp) {
+        return "";
+      }
+
+      const date = new Date(timestamp);
+
+      return new Intl.DateTimeFormat(
+        "es-MX",
+        {
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        }
+      ).format(date);
+
+    }
+
+
+    /*
+     * ESCAPAR HTML
+     */
+
+    function escapeHTML(text) {
+
+      if (!text) {
+        return "";
+      }
+
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /*
+     * CARGAR INFORMACIÓN DE INSTAGRAM
      */
 
     async function loadInstagramData() {
 
       try {
 
-        const response = await fetch("/api/instagram");
+        const response =
+          await fetch("/api/instagram");
 
-        const data = await response.json();
+        const data =
+          await response.json();
 
-
-        /*
-         * Si la API devuelve un error,
-         * lo mostramos en la consola.
-         */
 
         if (!response.ok) {
 
           throw new Error(
-            data.error || "No se pudieron obtener los datos"
+            data.error ||
+            "No se pudieron obtener los datos"
           );
 
         }
 
 
         /*
-         * =====================================================
-         * INFORMACIÓN DE LA CUENTA
-         * =====================================================
+         * PERFIL
          */
 
-        const profile = data.profile;
+        const profile =
+          data.profile;
+
+
+        document
+          .getElementById("mediaCount")
+          .textContent =
+          formatNumber(
+            profile.media_count
+          );
 
 
         /*
-         * Número total de publicaciones
-         */
-
-        document.getElementById("mediaCount").textContent =
-          formatNumber(profile.media_count);
-
-
-        /*
-         * =====================================================
          * INSIGHTS
-         * =====================================================
          */
 
-        const insights = data.insights?.data || [];
+        const insights =
+          data.insights?.data || [];
+
 
         const metrics = {};
 
@@ -375,38 +652,40 @@
 
 
         /*
-         * =====================================================
          * MOSTRAR MÉTRICAS
-         * =====================================================
          */
 
-        document.getElementById("followers").textContent =
-          formatNumber(metrics.follower_count);
+        document
+          .getElementById("followers")
+          .textContent =
+          formatNumber(
+            metrics.follower_count
+          );
 
 
-        document.getElementById("reach").textContent =
-          formatNumber(metrics.reach);
+        document
+          .getElementById("reach")
+          .textContent =
+          formatNumber(
+            metrics.reach
+          );
 
 
-        document.getElementById("interactions").textContent =
-          formatNumber(metrics.total_interactions);
+        document
+          .getElementById("interactions")
+          .textContent =
+          formatNumber(
+            metrics.total_interactions
+          );
 
-
-        /*
-         * =====================================================
-         * MENSAJE DE ÉXITO
-         * =====================================================
-         */
 
         console.log(
-          "Instagram conectado correctamente:",
+          "Instagram conectado:",
           profile.username
         );
 
-      }
 
-
-      catch (error) {
+      } catch (error) {
 
         console.error(
           "Error cargando Instagram:",
@@ -419,52 +698,295 @@
 
 
     /*
-     * =========================================================
-     * FORMATEAR NÚMEROS
-     * =========================================================
+     * CARGAR PUBLICACIONES
      */
 
-    function formatNumber(value) {
+    async function loadMedia() {
 
-      if (
-        value === undefined ||
-        value === null
-      ) {
+      const postsGrid =
+        document.getElementById(
+          "postsGrid"
+        );
 
-        return "—";
+      const postCount =
+        document.getElementById(
+          "postCount"
+        );
+
+
+      try {
+
+        const response =
+          await fetch("/api/media");
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "No se pudieron obtener las publicaciones"
+          );
+
+        }
+
+
+        const posts =
+          data.data || [];
+
+
+        /*
+         * ACTUALIZAR CONTADOR
+         */
+
+        postCount.textContent =
+          `${posts.length} publicaciones`;
+
+
+        /*
+         * SI NO HAY PUBLICACIONES
+         */
+
+        if (posts.length === 0) {
+
+          postsGrid.innerHTML = `
+            <div class="empty">
+              <h2>No hay publicaciones</h2>
+              <p>
+                No se encontraron publicaciones
+                disponibles en Instagram.
+              </p>
+            </div>
+          `;
+
+          return;
+
+        }
+
+
+        /*
+         * CREAR TARJETAS
+         */
+
+        postsGrid.innerHTML =
+          posts.map(post => {
+
+
+            /*
+             * DETERMINAR IMAGEN
+             */
+
+            const image =
+              post.media_type === "VIDEO"
+                ? post.thumbnail_url
+                : post.media_url;
+
+
+            /*
+             * DETERMINAR TIPO
+             */
+
+            let type =
+              post.media_type || "PUBLICACIÓN";
+
+
+            if (type === "IMAGE") {
+              type = "IMAGEN";
+            }
+
+            if (type === "VIDEO") {
+              type = "VIDEO";
+            }
+
+            if (type === "CAROUSEL_ALBUM") {
+              type = "CARRUSEL";
+            }
+
+
+            /*
+             * CAPTION
+             */
+
+            const caption =
+              post.caption ||
+              "Sin caption";
+
+
+            return `
+
+              <article class="post">
+
+                <a
+                  href="${post.permalink || "#"}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+
+                  <div class="post-image-wrapper">
+
+                    ${
+                      image
+                        ? `
+                          <img
+                            class="post-image"
+                            src="${image}"
+                            alt="Publicación de re:shape works"
+                            loading="lazy"
+                          >
+                        `
+                        : `
+                          <div
+                            style="
+                              width:100%;
+                              height:100%;
+                              display:flex;
+                              align-items:center;
+                              justify-content:center;
+                              color:#999;
+                              font-size:12px;
+                            "
+                          >
+                            Sin imagen
+                          </div>
+                        `
+                    }
+
+                  </div>
+
+                </a>
+
+
+                <div class="post-content">
+
+                  <div class="post-meta">
+
+                    <span class="post-type">
+                      ${type}
+                    </span>
+
+                    <span class="post-date">
+                      ${formatDate(post.timestamp)}
+                    </span>
+
+                  </div>
+
+
+                  <div class="post-caption">
+                    ${escapeHTML(caption)}
+                  </div>
+
+
+                  ${
+                    post.permalink
+                      ? `
+                        <a
+                          class="post-link"
+                          href="${post.permalink}"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Ver en Instagram →
+                        </a>
+                      `
+                      : ""
+                  }
+
+                </div>
+
+              </article>
+
+            `;
+
+          }).join("");
+
+
+      } catch (error) {
+
+        console.error(
+          "Error cargando publicaciones:",
+          error
+        );
+
+
+        postCount.textContent =
+          "Error";
+
+
+        postsGrid.innerHTML = `
+
+          <div class="error">
+
+            No se pudieron cargar
+            las publicaciones.
+
+          </div>
+
+        `;
 
       }
-
-      return new Intl.NumberFormat(
-        "es-MX"
-      ).format(value);
 
     }
 
 
     /*
-     * =========================================================
-     * BOTÓN ACTUALIZAR
-     * =========================================================
+     * ACTUALIZAR TODO
+     */
+
+    async function refreshDashboard() {
+
+      const button =
+        document.getElementById(
+          "refreshButton"
+        );
+
+
+      button.textContent =
+        "Actualizando...";
+
+
+      button.disabled = true;
+
+
+      await Promise.all([
+        loadInstagramData(),
+        loadMedia()
+      ]);
+
+
+      button.textContent =
+        "Actualizar datos";
+
+
+      button.disabled = false;
+
+    }
+
+
+    /*
+     * BOTÓN
      */
 
     document
-      .getElementById("refreshButton")
+      .getElementById(
+        "refreshButton"
+      )
       .addEventListener(
         "click",
-        loadInstagramData
+        refreshDashboard
       );
 
 
     /*
-     * =========================================================
-     * CARGAR DATOS AUTOMÁTICAMENTE
-     * =========================================================
+     * CARGAR AL ABRIR
      */
 
-    loadInstagramData();
+    refreshDashboard();
 
   </script>
 
 </body>
 </html>
+```
