@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -105,6 +104,11 @@
 
     .connect:hover {
       background: #333333;
+    }
+
+    .connect:disabled {
+      opacity: 0.6;
+      cursor: wait;
     }
 
     .dashboard {
@@ -227,9 +231,27 @@
       min-height: 58px;
     }
 
+    .post-stats {
+      display: flex;
+      align-items: center;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #eeeeee;
+    }
+
+    .post-stat {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .post-stat strong {
+      color: #171717;
+      font-weight: 600;
+    }
+
     .post-link {
       display: inline-block;
-      margin-top: 14px;
+      margin-top: 12px;
       font-size: 12px;
       color: #171717;
       text-decoration: none;
@@ -250,6 +272,7 @@
       text-align: center;
       color: #777;
       font-size: 14px;
+      grid-column: 1 / -1;
     }
 
     .error {
@@ -260,6 +283,7 @@
       text-align: center;
       color: #777;
       font-size: 14px;
+      grid-column: 1 / -1;
     }
 
     .empty {
@@ -268,6 +292,7 @@
       border-radius: 12px;
       padding: 50px;
       text-align: center;
+      grid-column: 1 / -1;
     }
 
     .empty h2 {
@@ -284,11 +309,9 @@
     }
 
     @media (max-width: 1000px) {
-
       .posts-grid {
         grid-template-columns: repeat(3, 1fr);
       }
-
     }
 
     @media (max-width: 800px) {
@@ -312,7 +335,6 @@
       .posts-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-
     }
 
     @media (max-width: 500px) {
@@ -334,7 +356,6 @@
         flex-direction: column;
         gap: 8px;
       }
-
     }
 
   </style>
@@ -421,7 +442,7 @@
       <div class="card">
 
         <div class="card-label">
-          Alcance
+          Alcance del contenido
         </div>
 
         <div
@@ -572,7 +593,7 @@
         return "";
       }
 
-      return text
+      return String(text)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -583,7 +604,7 @@
 
 
     /*
-     * CARGAR INFORMACIÓN DE INSTAGRAM
+     * CARGAR INFORMACIÓN GENERAL DE INSTAGRAM
      */
 
     async function loadInstagramData() {
@@ -592,6 +613,7 @@
 
         const response =
           await fetch("/api/instagram");
+
 
         const data =
           await response.json();
@@ -615,16 +637,20 @@
           data.profile;
 
 
-        document
-          .getElementById("mediaCount")
-          .textContent =
-          formatNumber(
-            profile.media_count
-          );
+        if (profile) {
+
+          document
+            .getElementById("mediaCount")
+            .textContent =
+            formatNumber(
+              profile.media_count
+            );
+
+        }
 
 
         /*
-         * INSIGHTS
+         * INSIGHTS DE CUENTA
          */
 
         const insights =
@@ -652,7 +678,7 @@
 
 
         /*
-         * MOSTRAR MÉTRICAS
+         * SEGUIDORES
          */
 
         document
@@ -663,13 +689,12 @@
           );
 
 
-        document
-          .getElementById("reach")
-          .textContent =
-          formatNumber(
-            metrics.reach
-          );
-
+        /*
+         * INTERACCIONES
+         *
+         * Esta métrica depende de que
+         * Instagram la devuelva a nivel cuenta.
+         */
 
         document
           .getElementById("interactions")
@@ -681,7 +706,7 @@
 
         console.log(
           "Instagram conectado:",
-          profile.username
+          profile?.username
         );
 
 
@@ -698,15 +723,16 @@
 
 
     /*
-     * CARGAR PUBLICACIONES
+     * CARGAR PUBLICACIONES + INSIGHTS
      */
 
-    async function loadMedia() {
+    async function loadMediaInsights() {
 
       const postsGrid =
         document.getElementById(
           "postsGrid"
         );
+
 
       const postCount =
         document.getElementById(
@@ -717,7 +743,7 @@
       try {
 
         const response =
-          await fetch("/api/media");
+          await fetch("/api/media-insights");
 
 
         const data =
@@ -728,7 +754,7 @@
 
           throw new Error(
             data.error ||
-            "No se pudieron obtener las publicaciones"
+            "No se pudieron obtener los insights"
           );
 
         }
@@ -747,6 +773,55 @@
 
 
         /*
+         * ACTUALIZAR CANTIDAD DE CONTENIDO
+         */
+
+        document
+          .getElementById("mediaCount")
+          .textContent =
+          formatNumber(
+            posts.length
+          );
+
+
+        /*
+         * CALCULAR ALCANCE TOTAL
+         *
+         * Sumamos el reach de las publicaciones
+         * que sí tienen datos disponibles.
+         */
+
+        const totalReach =
+          posts.reduce(
+            (total, post) => {
+
+              const reach =
+                post.insights?.reach;
+
+              if (
+                typeof reach === "number"
+              ) {
+
+                return total + reach;
+
+              }
+
+              return total;
+
+            },
+            0
+          );
+
+
+        document
+          .getElementById("reach")
+          .textContent =
+          formatNumber(
+            totalReach
+          );
+
+
+        /*
          * SI NO HAY PUBLICACIONES
          */
 
@@ -754,11 +829,16 @@
 
           postsGrid.innerHTML = `
             <div class="empty">
-              <h2>No hay publicaciones</h2>
+
+              <h2>
+                No hay publicaciones
+              </h2>
+
               <p>
                 No se encontraron publicaciones
                 disponibles en Instagram.
               </p>
+
             </div>
           `;
 
@@ -790,7 +870,8 @@
              */
 
             let type =
-              post.media_type || "PUBLICACIÓN";
+              post.media_type ||
+              "PUBLICACIÓN";
 
 
             if (type === "IMAGE") {
@@ -813,6 +894,37 @@
             const caption =
               post.caption ||
               "Sin caption";
+
+
+            /*
+             * REACH
+             */
+
+            const reach =
+              post.insights?.reach;
+
+
+            /*
+             * HTML DE REACH
+             */
+
+            const reachHTML =
+              reach !== null &&
+              reach !== undefined
+                ? `
+                    <span class="post-stat">
+                      Alcance:
+                      <strong>
+                        ${formatNumber(reach)}
+                      </strong>
+                    </span>
+                  `
+                : `
+                    <span class="post-stat">
+                      Alcance:
+                      <strong>—</strong>
+                    </span>
+                  `;
 
 
             return `
@@ -876,6 +988,13 @@
 
                   <div class="post-caption">
                     ${escapeHTML(caption)}
+                  </div>
+
+
+                  <div class="post-stats">
+
+                    ${reachHTML}
+
                   </div>
 
 
@@ -952,7 +1071,7 @@
 
       await Promise.all([
         loadInstagramData(),
-        loadMedia()
+        loadMediaInsights()
       ]);
 
 
@@ -989,4 +1108,3 @@
 
 </body>
 </html>
-```
