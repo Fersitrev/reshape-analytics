@@ -15,12 +15,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    /*
-     * ---------------------------------------------------------
-     * 1. INFORMACIÓN BÁSICA DE LA CUENTA
-     * ---------------------------------------------------------
-     */
-
+    // 1. Obtener información básica de la cuenta
     const profileUrl =
       "https://graph.instagram.com/v23.0/me" +
       "?fields=id,username,account_type,media_count" +
@@ -37,15 +32,7 @@ export default async function handler(req, res) {
       });
     }
 
-
-    /*
-     * ---------------------------------------------------------
-     * 2. INSIGHTS DE LA CUENTA
-     * ---------------------------------------------------------
-     *
-     * Usamos métricas que podemos consultar a nivel de cuenta.
-     */
-
+    // 2. Obtener insights
     const metrics =
       "reach,follower_count,accounts_engaged,total_interactions";
 
@@ -62,31 +49,15 @@ export default async function handler(req, res) {
     const insightsResponse = await fetch(insightsUrl);
     const insightsData = await insightsResponse.json();
 
-    if (!insightsResponse.ok) {
-      return res.status(insightsResponse.status).json({
-        error: "Error obteniendo insights de Instagram",
-        details: insightsData
-      });
-    }
-
-
-    /*
-     * ---------------------------------------------------------
-     * 3. DEVOLVEMOS TODO EN UN SOLO JSON
-     * ---------------------------------------------------------
-     */
-
     return res.status(200).json({
       profile: profileData,
       insights: insightsData
     });
 
   } catch (error) {
-
     return res.status(500).json({
       error: "Error interno del servidor",
       details: error.message
     });
-
   }
 }
