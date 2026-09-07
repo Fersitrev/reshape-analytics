@@ -7,6 +7,90 @@
   <title>re:shape analytics</title>
 
   <style>
+/* LOGIN */
+
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background: #f6f6f4;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.login-logo {
+  width: 36px;
+  height: 36px;
+  background: #171717;
+  color: #ffffff;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 25px;
+}
+
+.login-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.8px;
+  margin-bottom: 8px;
+}
+
+.login-description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #777;
+  margin-bottom: 25px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.login-input:focus {
+  border-color: #171717;
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px;
+  background: #171717;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background: #333333;
+}
+
+.login-error {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #777;
+  min-height: 18px;
+}
+    
     * {
       box-sizing: border-box;
       margin: 0;
@@ -363,7 +447,56 @@
 
 
 <body>
+<div
+  class="login-screen"
+  id="loginScreen"
+>
 
+  <div class="login-box">
+
+    <div class="login-logo">
+      r:
+    </div>
+
+    <div class="login-title">
+      re:shape analytics
+    </div>
+
+    <div class="login-description">
+      Ingresa tu contraseña para acceder
+      al dashboard.
+    </div>
+
+    <form id="loginForm">
+
+      <input
+        type="password"
+        id="passwordInput"
+        class="login-input"
+        placeholder="Contraseña"
+        autocomplete="current-password"
+        required
+      >
+
+      <button
+        type="submit"
+        class="login-button"
+        id="loginButton"
+      >
+        Entrar
+      </button>
+
+      <div
+        class="login-error"
+        id="loginError"
+      ></div>
+
+    </form>
+
+  </div>
+
+</div>
+  
   <!-- HEADER -->
 
   <header>
