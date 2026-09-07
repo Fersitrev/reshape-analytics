@@ -15,13 +15,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Obtener una sola publicación
+    // 1. Obtener todas las publicaciones actuales
     const mediaUrl =
       "https://graph.instagram.com/v23.0/" +
       userId +
       "/media" +
-      "?fields=id,caption,media_type,timestamp" +
-      "&limit=1" +
+      "?fields=id,caption,media_type,media_url,permalink,timestamp,thumbnail_url" +
+      "&limit=100" +
       "&access_token=" +
       encodeURIComponent(token);
 
@@ -30,41 +30,60 @@ export default async function handler(req, res) {
 
     if (!mediaResponse.ok) {
       return res.status(mediaResponse.status).json({
-        error: "Error obteniendo publicación",
+        error: "Error obteniendo publicaciones",
         details: mediaData
       });
     }
 
-    if (!mediaData.data || mediaData.data.length === 0) {
-      return res.status(404).json({
-        error: "No se encontraron publicaciones"
-      });
-    }
+    const media = mediaData.data || [];
 
-    const mediaId = mediaData.data[0].id;
+    // 2. Obtener reach de cada publicación
+    const results = [];
 
-    // Obtener insights de esa publicación
-    const insightsUrl =
-      "https://graph.instagram.com/v23.0/" +
-      mediaId +
-      "/insights" +
-      "?metric=reach" +
-      "&access_token=" +
-      encodeURIComponent(token);
+    for (const post of media) {
+      try {
+        const insightsUrl =
+          "https://graph.instagram.com/v23.0/" +
+          post.id +
+          "/insights" +
+          "?metric=reach" +
+          "&access_token=" +
+          encodeURIComponent(token);
 
-    const insightsResponse = await fetch(insightsUrl);
-    const insightsData = await insightsResponse.json();
+        const insightsResponse = await fetch(insightsUrl);
+        const insightsData = await insightsResponse.json();
 
-    if (!insightsResponse.ok) {
-      return res.status(insightsResponse.status).json({
-        error: "Error obteniendo insights de la publicación",
-        details: insightsData
-      });
+        let reach = null;
+
+        if (
+          insightsResponse.ok &&
+          insightsData.data &&
+          insightsData.data.length > 0
+        ) {
+          reach = insightsData.data[0].values?.[0]?.value ?? null;
+        }
+
+        results.push({
+          ...post,
+          insights: {
+            reach
+          }
+        });
+
+      } catch (error) {
+        results.push({
+          ...post,
+          insights: {
+            reach: null
+          },
+          insights_error: error.message
+        });
+      }
     }
 
     return res.status(200).json({
-      media: mediaData.data[0],
-      insights: insightsData
+      total: results.length,
+      data: results
     });
 
   } catch (error) {
