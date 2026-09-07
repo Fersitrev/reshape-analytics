@@ -1,4 +1,11 @@
+import { requireAuth } from "./auth-guard.js";
+
 export default async function handler(req, res) {
+
+   if (!requireAuth(req, res)) {
+    return;
+  }
+  
   const token = process.env.INSTAGRAM_ACCESS_TOKEN;
   const userId = process.env.INSTAGRAM_USER_ID;
 
