@@ -84,6 +84,8 @@ export default async function handler(req, res) {
     return res.status(200).json({
       data: postsWithInsights
     });
+    
+// endpoint de insights por publicación
 
   } catch (error) {
 
