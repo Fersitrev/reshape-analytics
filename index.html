@@ -185,20 +185,29 @@
 <body>
 
   <header>
+
     <div class="brand">
       <div class="logo">r:</div>
-      <div class="brand-name">re:shape analytics</div>
+
+      <div class="brand-name">
+        re:shape analytics
+      </div>
     </div>
 
     <div class="status">
       Instagram Analytics
     </div>
+
   </header>
+
 
   <main>
 
     <section class="intro">
-      <div class="eyebrow">Analytics dashboard</div>
+
+      <div class="eyebrow">
+        Analytics dashboard
+      </div>
 
       <h1>
         Understand what<br>
@@ -210,54 +219,251 @@
         del contenido de re:shape works en Instagram.
       </p>
 
-      <button class="connect" id="connectButton">
-        Conectar Instagram
+      <button class="connect" id="refreshButton">
+        Actualizar datos
       </button>
+
     </section>
+
 
     <section class="dashboard">
 
       <div class="card">
-        <div class="card-label">Seguidores</div>
-        <div class="card-value">—</div>
+
+        <div class="card-label">
+          Seguidores
+        </div>
+
+        <div class="card-value" id="followers">
+          —
+        </div>
+
       </div>
 
-      <div class="card">
-        <div class="card-label">Alcance</div>
-        <div class="card-value">—</div>
-      </div>
 
       <div class="card">
-        <div class="card-label">Interacciones</div>
-        <div class="card-value">—</div>
+
+        <div class="card-label">
+          Alcance
+        </div>
+
+        <div class="card-value" id="reach">
+          —
+        </div>
+
       </div>
 
+
       <div class="card">
-        <div class="card-label">Contenido publicado</div>
-        <div class="card-value">—</div>
+
+        <div class="card-label">
+          Interacciones
+        </div>
+
+        <div class="card-value" id="interactions">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="card-label">
+          Contenido publicado
+        </div>
+
+        <div class="card-value" id="mediaCount">
+          —
+        </div>
+
       </div>
 
     </section>
 
+
     <section class="empty">
-      <h2>Conecta tu cuenta de Instagram</h2>
+
+      <h2>
+        Datos de Instagram
+      </h2>
 
       <p>
-        Los datos de Instagram aparecerán aquí una vez que
-        configuremos la conexión con Meta y la API de Instagram.
+        Los datos de rendimiento de re:shape works aparecerán
+        aquí una vez que la conexión con Instagram esté activa.
       </p>
+
     </section>
 
   </main>
 
+
   <script>
-    document
-      .getElementById("connectButton")
-      .addEventListener("click", function () {
-        alert(
-          "La conexión con Instagram se configurará en el siguiente paso."
+
+    /*
+     * =========================================================
+     * CARGAR DATOS DE INSTAGRAM
+     * =========================================================
+     */
+
+    async function loadInstagramData() {
+
+      try {
+
+        const response = await fetch("/api/instagram");
+
+        const data = await response.json();
+
+
+        /*
+         * Si la API devuelve un error,
+         * lo mostramos en la consola.
+         */
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error || "No se pudieron obtener los datos"
+          );
+
+        }
+
+
+        /*
+         * =====================================================
+         * INFORMACIÓN DE LA CUENTA
+         * =====================================================
+         */
+
+        const profile = data.profile;
+
+
+        /*
+         * Número total de publicaciones
+         */
+
+        document.getElementById("mediaCount").textContent =
+          formatNumber(profile.media_count);
+
+
+        /*
+         * =====================================================
+         * INSIGHTS
+         * =====================================================
+         */
+
+        const insights = data.insights?.data || [];
+
+        const metrics = {};
+
+
+        insights.forEach(metric => {
+
+          if (
+            metric.values &&
+            metric.values.length > 0
+          ) {
+
+            metrics[metric.name] =
+              metric.values[
+                metric.values.length - 1
+              ].value;
+
+          }
+
+        });
+
+
+        /*
+         * =====================================================
+         * MOSTRAR MÉTRICAS
+         * =====================================================
+         */
+
+        document.getElementById("followers").textContent =
+          formatNumber(metrics.follower_count);
+
+
+        document.getElementById("reach").textContent =
+          formatNumber(metrics.reach);
+
+
+        document.getElementById("interactions").textContent =
+          formatNumber(metrics.total_interactions);
+
+
+        /*
+         * =====================================================
+         * MENSAJE DE ÉXITO
+         * =====================================================
+         */
+
+        console.log(
+          "Instagram conectado correctamente:",
+          profile.username
         );
-      });
+
+      }
+
+
+      catch (error) {
+
+        console.error(
+          "Error cargando Instagram:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /*
+     * =========================================================
+     * FORMATEAR NÚMEROS
+     * =========================================================
+     */
+
+    function formatNumber(value) {
+
+      if (
+        value === undefined ||
+        value === null
+      ) {
+
+        return "—";
+
+      }
+
+      return new Intl.NumberFormat(
+        "es-MX"
+      ).format(value);
+
+    }
+
+
+    /*
+     * =========================================================
+     * BOTÓN ACTUALIZAR
+     * =========================================================
+     */
+
+    document
+      .getElementById("refreshButton")
+      .addEventListener(
+        "click",
+        loadInstagramData
+      );
+
+
+    /*
+     * =========================================================
+     * CARGAR DATOS AUTOMÁTICAMENTE
+     * =========================================================
+     */
+
+    loadInstagramData();
+
   </script>
 
 </body>
