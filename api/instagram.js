@@ -24,10 +24,10 @@ export default async function handler(req, res) {
   try {
     // 1. Obtener información básica de la cuenta
     const profileUrl =
-      "https://graph.instagram.com/v23.0/me" +
-      "?fields=id,username,account_type,media_count" +
-      "&access_token=" +
-      encodeURIComponent(token);
+  "https://graph.instagram.com/v23.0/me" +
+  "?fields=id,username,account_type,media_count,followers_count" +
+  "&access_token=" +
+  encodeURIComponent(token);
 
     const profileResponse = await fetch(profileUrl);
     const profileData = await profileResponse.json();
